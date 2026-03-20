@@ -1,0 +1,70 @@
+"""
+rule:
+1. register are kinda "immutable"
+(meaning that they can change when they ONLY are None)
+2. register can hold references to variable, and integers.
+3. registers are global
+(stop complaining, we have an infinite amount of registers, the only one isnt infinite is your ram)
+
+keywords:
+func <name>,<return type>,<parameter count>,[*parameter(s)]:
+    - create a function.
+call <function>,[*parameter(s)];
+    - call <function>.
+def <name>,<data type>,[value];
+    - define a variable.
+ref <variable>,<register>;
+    - create a reference to <variable> inside <register>.
+print <register>;
+    - print the value of <register>, if <register> is a reference dereference it.
+lprint <register>;
+    - print the literal value of <register> (meaning it also print the memory address if holding a reference).
+return <value>;
+    - self-explainatory.
+if <comparator>,<register 1>,<register 2>:
+    - self-explainatory.
+else:
+    - self-explainatory.
+mut <register>;
+    - make <register> mutable.
+blank <variable or register>;
+    - make <variable or register> None.
+for <register 1>,<register 2>;
+    - for (auto <register 1> = 0, <register 1> < <register 2>; ++<register 1>);
+break;
+    - self-explainatory.
+continue;
+    - self-explainatory.
+copy <variable or register or STDIN>,<variable or register>;
+    - this one is abit complicated
+    - so ill explain in examples
+    - copy r1,r2;   // assuming r1 hold a value/reference, r2 is None
+    - copy var,r1;   // assuming var is defined, r1 is None
+    - copy STDIN,r1;    // assuming the user input an integers, r1 is None
+    - for STDOUT and STDERR, why th do you want to capture it?
+add <register 1>,<register 2>,<register 3>
+    - <register 3> = <register 1> + <register 2>
+    - the same go for sub, div, mul, mod.
+
+example: hello world
+func _start,int,0:
+    def hello,str,"Hello, world!\n";
+    ref hello,r1;
+    print r1;
+    return 0;
+
+example: recursive
+func recursive,None,1,i:    // None is placeholder
+    copy i,r1;
+    print r1;
+    copy 1,r2;
+    add r1,r2,r3;
+    call recursive,r3;
+
+func _start,int,0:
+    mut r1;
+    mut r2;
+    mut r3;
+    call recursive,1;
+    return 0;    // unreachable i guess
+"""
