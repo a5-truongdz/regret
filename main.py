@@ -4,6 +4,7 @@ A simple interpreter for my language.
 """
 
 from enum import Enum, auto
+from typing import *    # type: ignore
 
 """
 Lexer.
@@ -209,6 +210,8 @@ def lexer(src: str) -> list[Token | tuple[Token, str] | tuple[Token, bool] | tup
             ptr += 1
             start: int = ptr
             while ptr < src_size and src[ptr] != quote:
+                if src[ptr] == "\n":
+                    raise Lexer.UnterminatedString(row)
                 ptr += 1
             if ptr >= src_size:
                 raise Lexer.UnterminatedString(row)
@@ -227,5 +230,44 @@ def lexer(src: str) -> list[Token | tuple[Token, str] | tuple[Token, bool] | tup
     output.append(Token.EOF)
     return output
 
-# TODO: indent/dedent implementation - done
-# TODO: literal parsing - done
+"""
+AST nodes.
+"""
+
+class Literal:
+    def __init__(self, value: int | bool | str | float | None) -> None:
+        self.value: int | bool | str | float | None = value
+
+    def __repr__(self) -> str:
+        return f"Literal({self.value!r})"
+
+class Identifier:
+    def __init__(self, name: str) -> None:
+        self.name: str = name
+
+    def __repr__(self) -> str:
+        return f"Identifier({self.name})"
+
+class Register:
+    def __init__(self, name: str) -> None:
+        self.name: str = name
+    
+    def __repr__(self) -> str:
+        return f"Register({self.name})"
+
+class Def:
+    def __init__(self, name: Identifier, type_: Token, value: Literal) -> None:
+        self.name: Identifier = name
+        self.type: Token = type_
+        self.value: Literal = value
+
+    def __repr__(self) -> str:
+        return f"Def(name={self.name}, type={self.type}, value={self.value})"
+
+class Ref:
+    def __init__(self, variable: Identifier, register: Register) -> None:
+        self.variable: Identifier = variable
+        self.register: Register = register
+
+    def __repr__(self) -> str:
+        return f"Ref(variable={self.variable}, register={self.register})"
