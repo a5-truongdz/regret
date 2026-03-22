@@ -234,6 +234,9 @@ def lexer(src: str) -> list[Token | tuple[Token, str] | tuple[Token, bool] | tup
 AST nodes.
 """
 
+class Node:
+    pass
+
 class Literal:
     def __init__(self, value: int | bool | str | float | None) -> None:
         self.value: int | bool | str | float | None = value
@@ -255,7 +258,7 @@ class Register:
     def __repr__(self) -> str:
         return f"Register({self.name})"
 
-class Def:
+class Def(Node):
     def __init__(self, name: Identifier, type_: Token, value: Literal) -> None:
         self.name: Identifier = name
         self.type: Token = type_
@@ -264,10 +267,40 @@ class Def:
     def __repr__(self) -> str:
         return f"Def(name={self.name}, type={self.type}, value={self.value})"
 
-class Ref:
+class Ref(Node):
     def __init__(self, variable: Identifier, register: Register) -> None:
         self.variable: Identifier = variable
         self.register: Register = register
 
     def __repr__(self) -> str:
         return f"Ref(variable={self.variable}, register={self.register})"
+
+class Print(Node):
+    def __init__(self, register: Register, literally: bool) -> None:
+        self.register: Register = register
+        self.literally: bool = literally
+
+    def __repr__(self) -> str:
+        return f"Print(register={self.register}, literally={self.literally})"
+
+class Return(Node):
+    def __init__(self, value: Literal) -> None:
+        self.value: Literal = value
+
+    def __repr__(self) -> str:
+        return f"Return({self.value!r})"
+
+class Mut(Node):
+    def __init__(self, register: Register) -> None:
+        self.register: Register = register
+
+    def __repr__(self) -> str:
+        return f"Mut({self.register})"
+
+class Call(Node):
+    def __init__(self, function: Identifier, args: list[Literal | Identifier]) -> None:
+        self.function: Identifier = function
+        self.args: list[Literal | Identifier] = args
+
+    def __repr__(self) -> str:
+        return f"Call(function={self.function}, args={self.args})"
